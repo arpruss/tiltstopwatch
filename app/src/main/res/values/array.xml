@@ -1,0 +1,149 @@
+<resources>
+    <string-array name="precisionDisplayValues">
+        <item>1</item>
+        <item>0.1</item>
+        <item>0.01</item>
+        <item>0.001</item>
+    </string-array>
+
+    <string-array name="precisionValues">
+        <item>1000</item>
+        <item>100</item>
+        <item>10</item>
+        <item>1</item>
+    </string-array>
+
+    <string-array name="orientationValues">
+        <item>automatic</item>
+        <item>landscape</item>
+        <item>portrait</item>
+    </string-array>
+
+    <string-array name="distortionValues">
+        <item>0</item>
+        <item>10</item>
+        <item>20</item>
+        <item>30</item>
+        <item>40</item>
+        <item>50</item>
+        <item>75</item>
+        <item>100</item>
+        <item>10000</item>
+    </string-array>
+
+    <string-array name="distortionDisplayValues">
+        <item>none</item>
+        <item>10%</item>
+        <item>20%</item>
+        <item>30%</item>
+        <item>40%</item>
+        <item>50%</item>
+        <item>75%</item>
+        <item>100%</item>
+        <item>unlimited</item>
+    </string-array>
+
+    <string-array name="formatValues">
+        <item>h:m</item>
+        <item>h:m:s</item>
+        <item>m</item>
+        <item>m:s</item>
+        <item>s</item>
+    </string-array>
+
+    <string-array name="soundValues">
+        <item>none</item>
+        <item>beeps</item>
+        <item>voice</item>
+    </string-array>
+
+    <string-array name="fontValues">
+        <item>7 segment</item>
+        <item>DIN 1451</item>
+        <item>black</item>
+        <item>bold</item>
+        <item>medium</item>
+        <item>regular</item>
+    </string-array>
+
+    <string-array name="fsControlBarBrightnessValues">
+        <item>0</item>
+        <item>10</item>
+        <item>20</item>
+        <item>30</item>
+        <item>40</item>
+        <item>50</item>
+    </string-array>
+
+    <string-array name="fsControlBarBrightnessDisplayValues">
+        <item>none</item>
+        <item>10%</item>
+        <item>20%</item>
+        <item>30%</item>
+        <item>40%</item>
+        <item>50%</item>
+    </string-array>
+
+    <string-array name="fontNames">
+        <item>7 segment</item>
+        <item>DIN 1451</item>
+        <item>Roboto Black</item>
+        <item>Roboto Bold</item>
+        <item>Roboto Medium</item>
+        <item>Roboto Regular</item>
+    </string-array>
+
+    <string-array name="letterSpacingValues">
+        <item>85%</item>
+        <item>90%</item>
+        <item>95%</item>
+        <item>100%</item>
+    </string-array>
+
+    <string-array name="lineSpacingValues">
+        <item>102%</item>
+        <item>105%</item>
+        <item>110%</item>
+        <item>120%</item>
+    </string-array>
+
+    <string-array name="vibrationDisplayValues">
+        <item>all vibration disabled</item>
+        <item>10 ms</item>
+        <item>20 ms</item>
+        <item>30 ms</item>
+        <item>40 ms</item>
+        <item>50 ms</item>
+        <item>60 ms</item>
+    </string-array>
+
+    <string-array name="vibrationValues">
+        <item>0</item>
+        <item>10</item>
+        <item>20</item>
+        <item>30</item>
+        <item>40</item>
+        <item>50</item>
+        <item>60</item>
+    </string-array>
+
+    <string-array name="scaleValues">
+        <item>50%</item>
+        <item>60%</item>
+        <item>70%</item>
+        <item>80%</item>
+        <item>90%</item>
+        <item>94%</item>
+        <item>96%</item>
+        <item>98%</item>
+        <item>100%</item>
+    </string-array>
+
+    <string-array name="colorSchemes">
+        <item>black on white</item>
+        <item>green on black</item>
+        <item>red on black</item>
+        <item>white on black</item>
+        <item>yellow on black</item>
+    </string-array>
+</resources>

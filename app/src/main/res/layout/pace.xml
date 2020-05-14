@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:theme="@android:style/Theme.DeviceDefault.Dialog.Alert"
+    tools:targetApi="lollipop_mr1">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="16sp"
+            android:text="Units (distance or reps): "/>
+    <EditText
+        android:id="@+id/distance"
+        android:layout_width="70sp"
+        android:layout_height="wrap_content"
+        android:textSize="16sp"
+        android:inputType="numberDecimal"
+        />
+    </LinearLayout>
+    <TextView
+        android:id="@+id/message"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="16sp"
+        android:text=""/>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <Button
+            android:id="@+id/copy_pace"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Copy pace"
+            />
+        <Button
+            android:id="@+id/copy_speed"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Copy speed"
+            />
+
+    </LinearLayout>
+
+</LinearLayout>
