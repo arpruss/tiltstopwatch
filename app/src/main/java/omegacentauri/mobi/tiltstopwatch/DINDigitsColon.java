@@ -430,6 +430,23 @@ public class DINDigitsColon extends MiniFont {
       return path;
       }
     });
+  addCharacter((char)46,491f,131f,new PathMaker() {
+    @Override
+    public Path makePath() {
+      Path path = new Path();
+      path.moveTo(143f,1f);
+      path.quadTo(131f,1f,131f,-11f);
+      path.lineTo(131f,-214f);
+      path.quadTo(131f,-226f,143f,-226f);
+      path.lineTo(347f,-226f);
+      path.quadTo(358f,-226f,358f,-214f);
+      path.lineTo(358f,-11f);
+      path.quadTo(358f,1f,347f,1f);
+      path.lineTo(143f,1f);
+      path.close();
+      return path;
+      }
+    });
   addCharacter((char)8722,833f,101f,new PathMaker() {
     @Override
     public Path makePath() {
@@ -448,6 +465,7 @@ public class DINDigitsColon extends MiniFont {
       }
     });
   tweakWidth((char)58,392.8f);
+  tweakWidth((char)46,392.8f);
   tweakWidth((char)48,1011f);
   tweakWidth((char)49,1011f);
   tweakWidth((char)50,1011f);

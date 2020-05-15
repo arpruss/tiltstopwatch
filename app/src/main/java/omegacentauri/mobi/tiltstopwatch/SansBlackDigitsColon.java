@@ -346,6 +346,23 @@ public class SansBlackDigitsColon extends MiniFont {
       return path;
       }
     });
+  addCharacter((char)46,619f,117f,new PathMaker() {
+    @Override
+    public Path makePath() {
+      Path path = new Path();
+      path.moveTo(303f,-327f);
+      path.quadTo(383f,-327f,436f,-279.5f);
+      path.quadTo(489f,-232f,489f,-158f);
+      path.quadTo(489f,-84f,436f,-36.5f);
+      path.quadTo(383f,11f,303f,11f);
+      path.quadTo(222f,11f,169.5f,-37f);
+      path.quadTo(117f,-85f,117f,-158f);
+      path.quadTo(117f,-231f,169.5f,-279f);
+      path.quadTo(222f,-327f,303f,-327f);
+      path.close();
+      return path;
+      }
+    });
   addCharacter((char)8722,1120f,135f,new PathMaker() {
     @Override
     public Path makePath() {
@@ -360,5 +377,6 @@ public class SansBlackDigitsColon extends MiniFont {
       }
     });
   tweakWidth((char)58,492f);
+  tweakWidth((char)46,495.2f);
   }
 }

@@ -43,8 +43,6 @@ abstract public class ShowTime extends Activity {
                     4;
     SharedPreferences options;
     private static final float swipeAxisRatio = 1.33f;
-    private static final float minimumFling = 0.5f;
-    private static final float minimumVelocity = 0.2f;
     private static final float unselectedThickness = 2f;
     private static final float focusedThickness = 6f;
     private static final float selectedThickness = 9f;
@@ -58,30 +56,12 @@ abstract public class ShowTime extends Activity {
     protected static final int DOWN = 3;
     protected static final int UP = 4;
     String colorThemeOptionName = Options.PREF_STOPWATCH_COLOR;
-    Class activityCircle[] = { StopWatch.class, Clock.class, ClockWithSeconds.class };
 
 //    protected View.OnClickListener fullScreenListener;
     public BigTextView bigDigits;
     protected MyTimeKeeper timeKeeper;
     private GestureDetector gestureDetector;
     private View.OnTouchListener gestureListener;
-
-    Class nextActivity(int delta) {
-        for (int i=0; i< activityCircle.length; i++) {
-            if (this.getClass() == activityCircle[i]) {
-                int j = i + delta;
-                if (j < 0) {
-                    j = activityCircle.length - 1;
-                }
-                else {
-                    j %= activityCircle.length;
-                }
-                debug(""+activityCircle[j]);
-                return activityCircle[j];
-            }
-        }
-        return activityCircle[0];
-    }
 
     public float dp2px(float dp){
         return dp * (float)getResources().getDisplayMetrics().densityDpi / DisplayMetrics.DENSITY_DEFAULT;
@@ -172,7 +152,7 @@ abstract public class ShowTime extends Activity {
 
         ((ViewGroup) findViewById(android.R.id.content)).getChildAt(0).setBackgroundColor(back);
 
-        ((TextView)findViewById(R.id.fraction)).setTextColor(controlFore);
+        ((TextView)findViewById(R.id.angle)).setTextColor(controlFore);
         debug(String.format("controlFore=%x", controlFore));
 
         bigDigits.setTextColor(fore);
@@ -269,71 +249,6 @@ abstract public class ShowTime extends Activity {
         final DisplayMetrics metrics = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(metrics);
 
-        gestureDetector = new GestureDetector(this, new GestureDetector.SimpleOnGestureListener() {
-            @Override
-            public boolean onDown(MotionEvent motionEvent) {
-                return true;
-            }
-
-            @Override
-            public boolean onSingleTapUp(MotionEvent motionEvent) {
-                debug("singleTapUp");
-                if (!options.getBoolean(Options.PREF_CONTROL_FULLSCREEN, true))
-                    return false;
-                SharedPreferences.Editor ed = options.edit();
-                ed.putBoolean(Options.PREF_FULLSCREEN, ! options.getBoolean(Options.PREF_FULLSCREEN, false));
-                MyChrono.apply(ed);
-                setFullScreen();
-                setTheme();
-                return true;
-            }
-
-            @Override
-            public void onLongPress(MotionEvent motionEvent) {
-                timeKeeper.copyToClipboard();
-            }
-
-            @Override
-            public boolean onFling(MotionEvent e1, MotionEvent e2, float vx, float vy) {
-                if (! options.getBoolean(Options.PREF_SWIPE, true))
-                    return false;
-
-                final float baseSize;
-                baseSize = Math.min(2.3f * metrics.xdpi, Math.min(bigDigits.getWidth(), bigDigits.getHeight()));
-
-                final float minFlingPixels = baseSize * minimumFling;
-                final float minV = baseSize * minimumVelocity;
-
-                float dy = e2.getY() - e1.getY();
-                float dx = e2.getX() - e1.getX();
-
-//                debug("vx "+vx+" vy "+vy+ " baseSize " + baseSize);
-
-                if (Math.abs(dx)>Math.abs(dy)*swipeAxisRatio && Math.abs(vx) > minV) {
-                    if(-dx > minFlingPixels) {
-                        flingLeft();
-                        return true;
-                    }
-                    else if (dx > minFlingPixels) {
-                        flingRight();
-                        return true;
-                    }
-                }
-                else if (Math.abs(dy)>Math.abs(dx)*swipeAxisRatio && Math.abs(vy) > minV) {
-                    if(-dy > minFlingPixels) {
-                        flingUp();
-                        return true;
-                    }
-                    else if (dy > minFlingPixels) {
-                        flingDown();
-                        return true;
-                    }
-                }
-                return false;
-            }
-        } );
-
-        bigDigits.setOnTouchListener(gestureListener);
         bigDigits.post(new Runnable() {
             @Override
             public void run() {
@@ -447,14 +362,6 @@ abstract public class ShowTime extends Activity {
             onButtonMenu(null);
             return true;
         }
-        else if (keyCode == KeyEvent.KEYCODE_DPAD_UP) {
-            flingUp();
-            return true;
-        }
-        else if (keyCode == KeyEvent.KEYCODE_DPAD_DOWN) {
-            flingDown();
-            return true;
-        }
         return super.onKeyDown(keyCode, event);
     }
 
@@ -527,21 +434,6 @@ abstract public class ShowTime extends Activity {
         }
     }
 
-    protected void flingLeft() {
-        switchActivity(nextActivity(-1), LEFT);
-    }
-
-    protected void flingRight() {
-        switchActivity(nextActivity(1), RIGHT);
-    }
-
-    protected void flingUp() {
-        switchActivity(nextActivity(-1), UP);
-    }
-
-    protected void flingDown() {
-        switchActivity(nextActivity(1), DOWN);
-    }
 }
 
 class MyStateDrawable extends StateListDrawable {

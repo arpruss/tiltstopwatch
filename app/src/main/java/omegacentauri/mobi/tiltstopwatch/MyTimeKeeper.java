@@ -6,6 +6,4 @@ interface MyTimeKeeper {
     void stopUpdating();
     void destroy();
     void suspend();
-
-    void copyToClipboard();
 }

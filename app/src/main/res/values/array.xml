@@ -85,7 +85,6 @@
     </string-array>
 
     <string-array name="fontNames">
-        <item>7 segment</item>
         <item>DIN 1451</item>
         <item>Roboto Black</item>
         <item>Roboto Bold</item>

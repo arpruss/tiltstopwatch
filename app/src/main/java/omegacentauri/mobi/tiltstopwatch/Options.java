@@ -90,9 +90,6 @@ public class Options extends PreferenceActivity {
             Log.v("chrono", "regular");
             mf = new SansDigitsColon();
         }
-        else if (f.equals("7 segment")) {
-            mf = new SevenSegmentBoldItalicDigitsColon();
-        }
         else if (f.equals("DIN 1451")) {
             mf = new DINDigitsColon();
         }

@@ -52,20 +52,6 @@
         android:orientation="horizontal">
 
         <Button
-            android:id="@+id/start"
-            android:layout_width="0sp"
-            android:layout_height="match_parent"
-            android:layout_marginRight="5dp"
-            android:layout_weight="1"
-            android:background="@drawable/oval"
-            android:onClick="onButtonStart"
-            android:text="Start"
-            android:textColor="@android:color/white"
-            android:hapticFeedbackEnabled="true"
-            android:visibility="gone"
-            android:textSize="16sp" />
-
-        <Button
             android:id="@+id/calibrate"
             android:layout_width="0sp"
             android:layout_height="match_parent"
@@ -78,21 +64,8 @@
             android:hapticFeedbackEnabled="true"
             android:textSize="16sp" />
 
-        <Button
-            android:id="@+id/reset"
-            android:layout_width="0sp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:background="@drawable/oval"
-            android:onClick="onButtonReset"
-            android:text="Reset"
-            android:textColor="@android:color/white"
-            android:hapticFeedbackEnabled="true"
-            android:visibility="gone"
-            android:textSize="16sp" />
-
         <TextView
-            android:id="@+id/fraction"
+            android:id="@+id/angle"
             android:layout_width="0sp"
             android:layout_height="wrap_content"
             android:layout_weight="0.85"
