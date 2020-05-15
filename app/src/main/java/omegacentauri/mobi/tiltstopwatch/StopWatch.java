@@ -48,7 +48,6 @@ public class StopWatch extends ShowTime implements SensorEventListener {
             {R.id.settings, R.drawable.settings},
             {R.id.menu, R.drawable.menu}
     };
-    private boolean volumeControl;
     private SensorManager sensorManager;
     private Sensor gravity;
 
@@ -109,18 +108,7 @@ public class StopWatch extends ShowTime implements SensorEventListener {
 
         sensorManager.registerListener(this, gravity, SensorManager.SENSOR_DELAY_FASTEST);
 
-        volumeControl = options.getBoolean(Options.PREF_VOLUME, true);
         updateButtons();
-        if (options.getBoolean(Options.PREF_SWIPE, true) && !options.getBoolean(Options.PREF_STOPWATCH_SWIPE_INFO, false)) {
-            SharedPreferences.Editor ed = options.edit();
-            ed.putBoolean(Options.PREF_STOPWATCH_SWIPE_INFO, true);
-            MyChrono.apply(ed);
-            if (hasTouch())
-                timedMessage("StopWatch Mode", "Swipe on time or press menu button to switch to clock mode", 5200);
-            else
-                timedMessage("StopWatch Mode", "Press up/down or use menu button to switch to clock mode", 5200);
-//            Toast.makeText(this, "StopWatch mode: Swipe time to switch to clock", Toast.LENGTH_LONG).show();
-        }
     }
 
     void updateButtons() {
@@ -252,14 +240,6 @@ public class StopWatch extends ShowTime implements SensorEventListener {
             firstButton.performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY);
         chrono.firstButton();
         updateButtons();
-    }
-
-    public void onButtonStart(View v) {
-        pressFirstButton();
-    }
-
-    public void onButtonReset(View v) {
-        pressSecondButton();
     }
 
     public boolean isFirstButton(int keyCode) {
