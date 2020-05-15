@@ -17,6 +17,7 @@ import android.text.SpannableStringBuilder;
 import android.text.Spanned;
 import android.text.method.ScrollingMovementMethod;
 import android.text.style.TabStopSpan;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.View;
 import android.view.WindowManager;
@@ -34,7 +35,6 @@ public class MyChrono implements BigTextView.GetCenter, MyTimeKeeper {
     TextView angleView;
     public long baseTime;
     public long pauseTime;
-    int vibrateAfterCountDown = 100;
     public boolean paused = false;
     public boolean active = false;
     boolean quiet = false;
@@ -46,8 +46,7 @@ public class MyChrono implements BigTextView.GetCenter, MyTimeKeeper {
     public int precision = 100;
     private TextToSpeech tts = null;
     private boolean ttsMode;
-    int STREAM = AudioManager.STREAM_ALARM;;
-    private boolean boostAudio = false;
+    static final int STREAM = AudioManager.STREAM_ALARM;;
     private static final int GAIN = 2000;
     HashMap<String,String> ttsParams = new HashMap<String,String>();
     private LoudnessEnhancer loudnessEnhancer = null;
@@ -57,6 +56,7 @@ public class MyChrono implements BigTextView.GetCenter, MyTimeKeeper {
     private double lastAngle = 0;
     private AudioTrack shortTone;
     private AudioTrack longTone;
+    private long lastAnnouncement = 0;
 
     @SuppressLint("NewApi")
     public MyChrono(Activity context, SharedPreferences options, BigTextView mainView, TextView fractionView, View mainContainer) {
@@ -82,51 +82,26 @@ public class MyChrono implements BigTextView.GetCenter, MyTimeKeeper {
     }
 
     private void announce(long t) {
-//        long vibrate = Options.getVibration(options);
-        if (/*(quiet &&  vibrate == 0) || */ !active || paused)
+        if (!active || paused || quiet || t < (lastAnnouncement+10)/10*10)
             return;
-        if (t < -3000 || t >= 1000) {
-            lastAnnounced = floorDiv(t, 1000)*1000;
+
+
+        if (tts != null && ttsMode) {
+            String msg = "" + t;
+            StopWatch.debug("say: "+msg);
+            tts.speak(msg,TextToSpeech.QUEUE_FLUSH, ttsParams);
         }
-        else if (t < 0) {
-            if (tts != null && ttsMode) {
-                String msg;
-                if (-1000 <= t) {
-                    msg = "1";
-                }
-                else if (-2000 <= t) {
-                    msg = "2";
-                }
-                else {
-                    msg = "3";
-                }
-                StopWatch.debug("say: "+msg);
-                tts.speak(msg,TextToSpeech.QUEUE_FLUSH, ttsParams);
-            }
-            else if (!quiet) {
-                shortTone.stop();
-                shortTone.reloadStaticData();
-                shortTone.play();
-            }
-            lastAnnounced = floorDiv(t, 1000)*1000;
+        else if (!quiet) {
+            shortTone.stop();
+            shortTone.reloadStaticData();
+            shortTone.play();
         }
-        else if (t >= 0) {
-            if (!quiet) {
-                longTone.stop();
-                longTone.reloadStaticData();
-                longTone.play();
-            }
-            ShowTime.vibrate(context, vibrateAfterCountDown);
-            lastAnnounced = 0;
-        }
+        lastAnnouncement = t;
     }
 
     public void updateViews() {
         long t = getTime();
-        if (lastAnnounced < 0 && lastAnnounced + 1000 <= t) {
-            announce(t+10);
-        }
-
+        announce(t/1000);
         mainView.setText(formatTime(t,mainView.getHeight() > mainView.getWidth()));
     }
 
@@ -195,6 +170,7 @@ public class MyChrono implements BigTextView.GetCenter, MyTimeKeeper {
 
     public void reset() {
         active = false;
+        lastAnnouncement = 0;
         stopUpdating();
     }
 
@@ -240,11 +216,6 @@ public class MyChrono implements BigTextView.GetCenter, MyTimeKeeper {
     }
 
     public void setAudio(String soundMode) {
-        boostAudio = Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP && options.getBoolean(Options.PREF_BOOST, false);
-        STREAM = Options.getStream(options);
-
-        vibrateAfterCountDown = options.getBoolean(Options.PREF_VIBRATE_AFTER_COUNTDOWN, true) ? (int)LONG_TONE_LENGTH/2 : 0;
-
         if (soundMode.equals("none")) {
             quiet = true;
             ttsMode = false;
@@ -273,23 +244,6 @@ public class MyChrono implements BigTextView.GetCenter, MyTimeKeeper {
         if (options.getBoolean(Options.PREF_BOOST, false))
             am.setStreamVolume(STREAM, am.getStreamMaxVolume(STREAM), 0);
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP && boostAudio) {
-            try {
-                StopWatch.debug("trying to boost");
-                loudnessEnhancer = new LoudnessEnhancer(sessionId);
-                loudnessEnhancer.setTargetGain(GAIN);
-                loudnessEnhancer.setEnabled(true);
-                if (!loudnessEnhancer.getEnabled()) {
-                    loudnessEnhancer = null;
-                }
-                else {
-                    StopWatch.debug("loudness success");
-                }
-            }
-            catch(Exception e) {
-            }
-        }
-
         if (soundMode.equals("voice")) {
             ttsMode = true;
             ttsParams.put(TextToSpeech.Engine.KEY_PARAM_STREAM, String.valueOf(STREAM));
@@ -317,7 +271,7 @@ public class MyChrono implements BigTextView.GetCenter, MyTimeKeeper {
         pauseTime = options.getLong(Options.PREF_PAUSED_TIME, 0);
         active = options.getBoolean(Options.PREF_ACTIVE, false);
         paused = options.getBoolean(Options.PREF_PAUSED, false);
-        lastAnnounced = options.getLong(Options.PREF_LAST_ANNOUNCED, 0);
+        lastAnnouncement = options.getLong(Options.PREF_LAST_ANNOUNCED, 0);
         setAudio(options.getString(Options.PREF_SOUND, "voice"));
 
         precision = Integer.parseInt(options.getString(Options.PREF_PRECISION, "100"));
@@ -364,7 +318,7 @@ public class MyChrono implements BigTextView.GetCenter, MyTimeKeeper {
         ed.putLong(Options.PREF_PAUSED_TIME, pauseTime);
         ed.putBoolean(Options.PREF_ACTIVE, active);
         ed.putBoolean(Options.PREF_PAUSED, paused);
-        ed.putLong(Options.PREF_LAST_ANNOUNCED, lastAnnounced);
+        ed.putLong(Options.PREF_LAST_ANNOUNCED, lastAnnouncement);
         ed.putLong(Options.PREF_BOOT_TIME, getBootTime());
 
         apply(ed);
@@ -391,7 +345,7 @@ public class MyChrono implements BigTextView.GetCenter, MyTimeKeeper {
                 }
             }, 0, precision<=10 ? precision : 50); // avoid off-by-1 errors at lower precisions, at cost of some battery life
         }
-        if (options.getBoolean(Options.PREF_SCREEN_ON, false))
+        if (options.getBoolean(Options.PREF_SCREEN_ON, true))
             ((Activity)context).getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         else
             ((Activity)context).getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
@@ -469,6 +423,8 @@ public class MyChrono implements BigTextView.GetCenter, MyTimeKeeper {
 
     public void setAngle(double angle) {
         this.lastAngle = angle;
-        setAngleView(String.format("%.1f\u00B0",lastAngle));
+        String f = String.format("%.1f\u00B0",lastAngle);
+        if (!f.equals(angleView.getText()))
+            setAngleView(f);
     }
 }

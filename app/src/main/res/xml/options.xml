@@ -1,15 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <ListPreference android:title="Angle to start clock"
+        android:summary="Angle needed for starting clock"
+        android:key="startAngle"
+        android:defaultValue="6°"
+        android:entries="@array/angleValues"
+        android:entryValues="@array/angleValues" />
+    <ListPreference android:title="Angle to stop clock"
+        android:summary="Angle needed for stopping clock"
+        android:key="stopAngle"
+        android:defaultValue="12°"
+        android:entries="@array/angleValues"
+        android:entryValues="@array/angleValues" />
+    <ListPreference android:title="Sounds"
+        android:key="sounds"
+        android:defaultValue="voice"
+        android:entries="@array/soundValues"
+        android:entryValues="@array/soundValues" />
     <CheckBoxPreference android:title="Keep Screen On"
         android:key="screenOn"
-        android:defaultValue="false"
+        android:defaultValue="true"
         android:summary="Do not allow device to go to sleep while stopwatch is running"></CheckBoxPreference>
-    <ListPreference android:title="Stopwatch Big Digit Format"
-        android:summary=""
-        android:key="format"
-        android:defaultValue="h:m:s"
-        android:entries="@array/formatValues"
-        android:entryValues="@array/formatValues" />
     <ListPreference android:title="Display Precision"
         android:summary="Set precision in seconds"
         android:key="precision"
@@ -22,26 +33,11 @@
         android:defaultValue="medium"
         android:entries="@array/fontNames"
         android:entryValues="@array/fontValues" />
-    <ListPreference android:title="Stopwatch Color Scheme"
+    <ListPreference android:title="Color Scheme"
         android:key="color"
         android:defaultValue="white on black"
         android:entries="@array/colorSchemes"
         android:entryValues="@array/colorSchemes" />
-    <ListPreference android:title="Clock Color Scheme"
-        android:key="clockColor"
-        android:defaultValue="white on black"
-        android:entries="@array/colorSchemes"
-        android:entryValues="@array/colorSchemes" />
-    <CheckBoxPreference android:title="Use Volume Keys"
-        android:key="volume"
-        android:defaultValue="true"
-        android:summary="Volume Up = Start/Stop/Continue and Volume Down = Delay/Lap/Reset"
-        />
-    <ListPreference android:title="Countdown Sounds"
-        android:key="sounds"
-        android:defaultValue="voice"
-        android:entries="@array/soundValues"
-        android:entryValues="@array/soundValues" />
     <ListPreference android:title="Orientation"
         android:summary="Set display orientation"
         android:key="orientation"
@@ -55,24 +51,6 @@
             android:defaultValue="10"
             android:entries="@array/distortionDisplayValues"
             android:entryValues="@array/distortionValues" />
-        <CheckBoxPreference android:title="Control Fullscreen"
-            android:key="controlFS"
-            android:defaultValue="true"
-            android:summary="Allow switching to fullscreen mode by tapping in middle of screen"></CheckBoxPreference>
-        <CheckBoxPreference android:title="24 Hour Clock"
-            android:key="twentyfour"
-            android:defaultValue="false"
-            />
-    <ListPreference android:title="Fullscreen Control Bar Brightness"
-        android:summary="Set brightness of the bottom bar while in full screen mode"
-        android:key="fsBright"
-        android:defaultValue="0"
-        android:entries="@array/fsControlBarBrightnessDisplayValues"
-        android:entryValues="@array/fsControlBarBrightnessValues" />
-        <CheckBoxPreference android:title="Allow Three Line"
-            android:key="threeLine"
-            android:defaultValue="true"
-            android:summary="Use three lines for h:m:s portrait display."></CheckBoxPreference>
         <ListPreference android:title="Digit Spacing"
             android:summary="Set spacing of large digits"
             android:key="letterSpacing"
@@ -91,25 +69,6 @@
             android:defaultValue="98%"
             android:entries="@array/scaleValues"
             android:entryValues="@array/scaleValues" />
-        <CheckBoxPreference android:title="Vibrate After Countdown"
-            android:key="vibrateAfterCountdown"
-            android:defaultValue="true"
-            />
-        <CheckBoxPreference android:title="Boost Countdown Audio"
-            android:key="boost"
-            android:defaultValue="false"
-            android:summary="USE AT YOUR OWN RISK. Boosted audio could damage speakers, earphones or hearing."
-            />
-        <CheckBoxPreference android:title="Use Alarm Stream"
-            android:key="alarm"
-            android:defaultValue="true"
-            android:summary="If this is turned off, the media stream will be used."
-            />
-        <CheckBoxPreference android:title="Swipe Between Clock/Stopwatch"
-            android:key="swipe"
-            android:defaultValue="true"
-            android:summary=""
-            />
     </PreferenceCategory>
     <PreferenceCategory android:title="Licenses and Copyrights">
     <Preference android:key="license" android:title="View Licenses and Copyrights"/>

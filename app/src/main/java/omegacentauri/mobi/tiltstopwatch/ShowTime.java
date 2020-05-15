@@ -68,13 +68,7 @@ abstract public class ShowTime extends Activity {
     }
 
     public int getControlBarForeColor() {
-        int base = Options.getForeColor(this, options);
-        if (!options.getBoolean(Options.PREF_FULLSCREEN, false))
-            return base;
-        int controlBarBrightness = 255 * Integer.parseInt(options.getString(Options.PREF_FS_BRIGHT, "0")) / 100;
-        if (controlBarBrightness == 0)
-            return base;
-        return (base & 0xFFFFFF) | (controlBarBrightness << 24);
+        return Options.getForeColor(this, options);
     }
 
     @Override
@@ -194,54 +188,6 @@ abstract public class ShowTime extends Activity {
 
     }
 
-    protected void setFullScreen()
-    {
-        boolean fs = options.getBoolean(Options.PREF_CONTROL_FULLSCREEN, true) && options.getBoolean(Options.PREF_FULLSCREEN, false);
-        Window w = getWindow();
-        WindowManager.LayoutParams attrs = w.getAttributes();
-
-        if (options.getBoolean(Options.PREF_FULLSCREEN, false)) {
-            attrs.flags |= WindowManager.LayoutParams.FLAG_FULLSCREEN;
-        }
-        else {
-            attrs.flags &= ~WindowManager.LayoutParams.FLAG_FULLSCREEN;
-        }
-
-        w.setAttributes(attrs);
-
-        View dv = w.getDecorView();
-
-        if(Build.VERSION.SDK_INT > 11 && Build.VERSION.SDK_INT < 19) {
-            dv.setSystemUiVisibility(fs ? View.GONE : View.VISIBLE);
-        } else if(Build.VERSION.SDK_INT >= 19) {
-            int flags = dv.getSystemUiVisibility();
-            if (fs)
-                flags |= View.SYSTEM_UI_FLAG_HIDE_NAVIGATION | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY;
-            else
-                flags &= ~(View.SYSTEM_UI_FLAG_HIDE_NAVIGATION | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
-            dv.setSystemUiVisibility(flags);
-        }
-        int controlBarBrightness = 0;
-        if (fs) {
-            controlBarBrightness = 255 * Integer.parseInt(options.getString(Options.PREF_FS_BRIGHT, "0")) / 100;
-        }
-
-        controlBar.setVisibility((fs && controlBarBrightness == 0) ? View.GONE : View.VISIBLE);
-        if (controlBarBrightness > 0 && fs)
-            controlBar.setBackgroundColor(Options.getBackColor(this, options) & (controlBarBrightness<<24));
-        else
-            controlBar.setBackgroundColor(Options.getBackColor(this, options) | 0xFF000000);
-
-        RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
-        if (! fs) {
-            lp.addRule(RelativeLayout.ABOVE, R.id.controlBar);
-        }
-        else {
-            lp.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
-        }
-        mainContainer.setLayoutParams(lp);
-    }
-
     @Override
     protected void onResume() {
         super.onResume();
@@ -261,7 +207,6 @@ abstract public class ShowTime extends Activity {
         setOrientation();
 
         setTheme();
-        setFullScreen();
         debug("theme");
         int orientation = getResources().getConfiguration().orientation;
 
@@ -304,7 +249,6 @@ abstract public class ShowTime extends Activity {
     @Override
     public void onOptionsMenuClosed(Menu menu) {
         super.onOptionsMenuClosed(menu);
-        setFullScreen();
     }
 
     public void lockOrientation() {
@@ -370,13 +314,6 @@ abstract public class ShowTime extends Activity {
         clip.setText(s);
     }
 
-    public static void vibrate(Activity context, long time) {
-        if (time == 0)
-            return;
-        Vibrator vibrator = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
-        vibrator.vibrate(time);
-    }
-
     public boolean isTV() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ECLAIR) {
             return getPackageManager().hasSystemFeature("android.hardware.type.television");
@@ -403,35 +340,6 @@ abstract public class ShowTime extends Activity {
                 return true;
         }
         return super.onOptionsItemSelected(item);
-    }
-
-    public void switchActivity(Class a, int direction) {
-        SharedPreferences.Editor ed = options.edit();
-        ed.putString(Options.PREF_LAST_ACTIVITY, a.getName());
-        MyChrono.apply(ed);
-        startActivity(new Intent(this, a));
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ECLAIR) {
-            if (direction == RIGHT) {
-                overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_right);
-                finish();
-            }
-            else if (direction == LEFT) {
-                overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_left);
-                finish();
-            }
-            else if (direction == DOWN) {
-                overridePendingTransition(R.anim.slide_in_down, R.anim.slide_out_down);
-                finish();
-            }
-            else if (direction == UP) {
-                overridePendingTransition(R.anim.slide_in_up, R.anim.slide_out_up);
-                finish();
-            }
-            else if (direction == NONE) {
-                overridePendingTransition(0,0);
-                finish();
-            }
-        }
     }
 
 }

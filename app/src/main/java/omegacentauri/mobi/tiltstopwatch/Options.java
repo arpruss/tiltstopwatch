@@ -31,6 +31,8 @@ public class Options extends PreferenceActivity {
     public static final String PREF_ACTIVE = "active";
     public static final String PREF_PAUSED = "paused";
     public static final String PREF_BOOT_TIME = "boot";
+    public static final String PREF_START_ANGLE = "startAngle";
+    public static final String PREF_STOP_ANGLE = "stopAngle";
     public static final String PREF_SCREEN_ON = "screenOn";
     public static final String PREF_PRECISION = "precision";
     public static final String PREF_STOPWATCH_COLOR = "color";
@@ -81,6 +83,18 @@ public class Options extends PreferenceActivity {
 
     static float getMaxAspect(SharedPreferences options) {
         return Float.parseFloat(options.getString(Options.PREF_DISTORTION, "10"))*.01f + 1f;
+    }
+
+    static float getStartAngle(SharedPreferences options) {
+        return getAngle(options.getString(Options.PREF_START_ANGLE, "6*"));
+    }
+
+    private static float getAngle(String string) {
+        return Float.parseFloat(string.substring(0, string.length()-1));
+    }
+
+    static float getStopAngle(SharedPreferences options) {
+        return getAngle(options.getString(Options.PREF_STOP_ANGLE, "12*"));
     }
 
     static MiniFont getFont(SharedPreferences options) {
