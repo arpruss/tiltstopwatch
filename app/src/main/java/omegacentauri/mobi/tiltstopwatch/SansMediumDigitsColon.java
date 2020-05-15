@@ -374,6 +374,5 @@ public class SansMediumDigitsColon extends MiniFont {
       }
     });
   tweakWidth((char)58,434.4f);
-  tweakWidth((char)46,457.6f);
   }
 }

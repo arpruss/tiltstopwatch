@@ -79,6 +79,8 @@ abstract public class MiniFont {
     protected void tweakWidth(char c, float newWidth) {
         Glyph g = map.get(c);
 
+        StopWatch.debug("bad char "+c);
+
         if (g.width == newWidth)
             return;
 

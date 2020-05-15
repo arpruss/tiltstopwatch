@@ -114,6 +114,9 @@ public class Options extends PreferenceActivity {
         else if (f.equals("black")) {
             mf = new SansBlackDigitsColon();
         }
+        else if (f.equals("7 segment")) {
+            mf = new SevenSegmentBoldItalicDigitsColon();
+        }
         else {
             mf = new SansBoldDigitsColon();
         }

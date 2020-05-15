@@ -1,9 +1,10 @@
 from fontTools.ttLib import TTFont
 from fontTools.pens.basePen import decomposeQuadraticSegment
 from sys import argv
+import sys
 
 charsToDump = "0123456789:.\u2212"
-charsToNarrow = ":."
+charsToNarrow = ":"
 narrowFraction = 0.8
 maximizeDigitBounds = True
 equalizeWidths = "0123456789"
@@ -39,6 +40,8 @@ class MyPen(object):
     def qCurveTo(self, *points):
         decomp = decomposeQuadraticSegment(points)
         for pair in decomp:
+            if pair[1] is None:
+                pair = (pair[0],decomp[0][0])
             shifted = self.shiftList(pair)
             print(self.indent+"path.quadTo(%gf,%gf,%gf,%gf);" % tuple(shifted[0]+shifted[1]))
     def lineTo(self, point):

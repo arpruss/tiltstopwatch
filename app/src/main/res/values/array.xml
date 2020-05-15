@@ -103,6 +103,7 @@
     </string-array>
 
     <string-array name="fontNames">
+        <item>7 Segment</item>
         <item>DIN 1451</item>
         <item>Roboto Black</item>
         <item>Roboto Bold</item>
