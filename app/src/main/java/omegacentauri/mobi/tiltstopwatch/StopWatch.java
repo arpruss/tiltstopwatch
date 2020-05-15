@@ -167,6 +167,7 @@ public class StopWatch extends ShowTime implements SensorEventListener {
         }
         if (angle >= STOP_ANGLE && (chrono.active && ! chrono.paused)) {
             pressFirstButton();
+            chrono.readTime();
             lastStopped = java.lang.System.currentTimeMillis();
         }
         chrono.setAngle(angle);
