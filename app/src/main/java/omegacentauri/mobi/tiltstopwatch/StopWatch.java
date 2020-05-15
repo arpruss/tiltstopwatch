@@ -271,37 +271,6 @@ public class StopWatch extends ShowTime implements SensorEventListener {
     }
 
     @Override
-    public boolean onKeyUp(int keyCode, KeyEvent event) {
-        if (volumeControl && (keyCode == KeyEvent.KEYCODE_VOLUME_UP ||
-                keyCode == KeyEvent.KEYCODE_VOLUME_DOWN) )
-            return true;
-        else
-            return super.onKeyUp(keyCode, event);
-    }
-
-    @Override
-    public boolean onKeyDown(int keyCode, KeyEvent event) {
-        if (event.getAction() != KeyEvent.ACTION_DOWN) {
-            if (volumeControl && (keyCode == KeyEvent.KEYCODE_VOLUME_UP || keyCode == KeyEvent.KEYCODE_VOLUME_DOWN))
-                return true;
-            else
-                return super.onKeyDown(keyCode, event);
-        }
-        if (isFirstButton(keyCode)) {
-            pressFirstButton();
-            return true;
-        }
-        else if (isSecondButton(keyCode)) {
-            pressSecondButton();
-            return true;
-        }
-//        else if (keyCode == KeyEvent.KEYCODE_DPAD_RIGHT) {
-//            onButtonSettings(null);
-//        }
-        return super.onKeyDown(keyCode, event);
-    }
-
-    @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
         menu.findItem(R.id.copy_laps).setVisible(chrono.lapData.length()>0);
         menu.findItem(R.id.clear_laps).setVisible(chrono.lapData.length()>0);
@@ -330,12 +299,6 @@ public class StopWatch extends ShowTime implements SensorEventListener {
                 return true;
             case R.id.pace:
                 pace();
-                return true;
-            case R.id.clock:
-                switchActivity(Clock.class, NONE);
-                return true;
-            case R.id.clock_with_seconds:
-                switchActivity(ClockWithSeconds.class, NONE);
                 return true;
         }
         return super.onOptionsItemSelected(item);
