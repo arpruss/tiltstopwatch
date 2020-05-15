@@ -67,7 +67,7 @@ public class StopWatch extends ShowTime implements SensorEventListener {
         timeKeeper = chrono;
 
         sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
-        gravity = sensorManager.getDefaultSensor(Sensor.TYPE_GRAVITY);
+        gravity = sensorManager.getDefaultSensor(Build.VERSION.SDK_INT >= 9 ? Sensor.TYPE_GRAVITY : Sensor.TYPE_ACCELEROMETER);
         gravityAdjust[0] = options.getFloat("CALIBRATE_X", 0);
         gravityAdjust[1] = options.getFloat("CALIBRATE_Y", 0);
         gravityAdjust[2] = options.getFloat("CALIBRATE_Z", 0);

@@ -2,7 +2,7 @@ apply plugin: 'com.android.application'
 
 android {
     compileSdkVersion 27
-    archivesBaseName = "TileStopwatch"
+    archivesBaseName = "TiltStopwatch"
     defaultConfig {
         applicationId "omegacentauri.mobi.tiltstopwatch"
         minSdkVersion 4
