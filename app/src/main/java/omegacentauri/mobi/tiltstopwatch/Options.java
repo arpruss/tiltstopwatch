@@ -65,6 +65,7 @@ public class Options extends PreferenceActivity {
     public static final String PREF_SWIPE = "swipe";
     public static final int highlightPercent = 25;
     public static final String PREF_LAST_ACTIVITY = "lastActivity";
+    public static final String PREF_RESTART_TIME = "restartTime";
     static Map<String, int[]> colorMap = new HashMap<String,int[]>();
     static final int[] defaultColor = {Color.WHITE, Color.BLACK};
     private SharedPreferences.OnSharedPreferenceChangeListener listener;

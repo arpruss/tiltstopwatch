@@ -51,6 +51,8 @@ public class MyChrono implements BigTextView.GetCenter, MyTimeKeeper {
     private static final long SHORT_TONE_LENGTH = 75;
     private static final long LONG_TONE_LENGTH = 600;
     private static final float TONE_FREQUENCY = 2000;
+    private static final long ANNOUNCEMENT_TIME = 10000;
+    private static final long PREANNOUNCE = 50;
     private double lastAngle = 0;
     private AudioTrack shortTone;
     private AudioTrack longTone;
@@ -80,12 +82,15 @@ public class MyChrono implements BigTextView.GetCenter, MyTimeKeeper {
     }
 
     private void announce(long t) {
-        if (!active || paused || quiet || t < (lastAnnouncement+10)/10*10)
+        if (!active || paused || quiet || t + PREANNOUNCE < (lastAnnouncement+ANNOUNCEMENT_TIME)/ANNOUNCEMENT_TIME*ANNOUNCEMENT_TIME)
             return;
 
-        if (tts != null && ttsMode && 10 <= t) {
-            String msg = "" + t;
-            StopWatch.debug("say: "+msg);
+        lastAnnouncement = t;
+
+        t = t+PREANNOUNCE;
+
+        if (tts != null && ttsMode && ANNOUNCEMENT_TIME <= t) {
+            String msg = "" + t/1000;
             tts.speak(msg,TextToSpeech.QUEUE_FLUSH, ttsParams);
         }
         else if (!quiet) {
@@ -93,12 +98,11 @@ public class MyChrono implements BigTextView.GetCenter, MyTimeKeeper {
             shortTone.reloadStaticData();
             shortTone.play();
         }
-        lastAnnouncement = t;
     }
 
     public void updateViews() {
         long t = getTime();
-        announce(t/1000);
+        announce(t);
         mainView.setText(formatTime(t,mainView.getHeight() > mainView.getWidth(), precision));
     }
 
@@ -165,21 +169,6 @@ public class MyChrono implements BigTextView.GetCenter, MyTimeKeeper {
         }
     }
 
-    public void reset() {
-        active = false;
-        lastAnnouncement = -10;
-        stopUpdating();
-    }
-
-    public void secondButton() {
-        if (active) {
-            active = false;
-            stopUpdating();
-        }
-        save();
-        updateViews();
-    }
-
     private short[] sinewave(float frequency, long duration) {
         int numSamples = (int)(44.100 * duration);
         double alpha = frequency / 44100 * 2 * Math.PI;
@@ -189,28 +178,25 @@ public class MyChrono implements BigTextView.GetCenter, MyTimeKeeper {
         return samples;
     }
 
-    public void firstButton() {
-        if (active && paused) {
-            baseTime += SystemClock.elapsedRealtime() - pauseTime;
-            paused = false;
-            startUpdating();
-            save();
-        }
-        else if (!active) {
-            baseTime = SystemClock.elapsedRealtime();
-            paused = false;
-            active = true;
-            startUpdating();
-            save();
-        }
-        else {
-            paused = true;
-            pauseTime = SystemClock.elapsedRealtime();
-            stopUpdating();
-            save();
-        }
+    public void resetAndStart() {
+        active = false;
+        lastAnnouncement = -10;
+        baseTime = SystemClock.elapsedRealtime();
+        paused = false;
+        active = true;
+        startUpdating();
+        save();
         updateViews();
     }
+
+    public void stop() {
+        paused = true;
+        pauseTime = SystemClock.elapsedRealtime();
+        stopUpdating();
+        save();
+        updateViews();
+    }
+
 
     public void setAudio(String soundMode) {
         if (soundMode.equals("none")) {
@@ -340,10 +326,10 @@ public class MyChrono implements BigTextView.GetCenter, MyTimeKeeper {
                 }
             }, 0, precision<=10 ? precision : 50); // avoid off-by-1 errors at lower precisions, at cost of some battery life
         }
-        if (options.getBoolean(Options.PREF_SCREEN_ON, true))
-            ((Activity)context).getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-        else
-            ((Activity)context).getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+//        if (options.getBoolean(Options.PREF_SCREEN_ON, true))
+        ((Activity)context).getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+//        else
+//            ((Activity)context).getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
     }
 
     public static void clearSaved(SharedPreferences pref) {

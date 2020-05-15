@@ -33,8 +33,8 @@ public class StopWatch extends ShowTime implements SensorEventListener {
     private MyChrono chrono;
     private double START_ANGLE;
     private double STOP_ANGLE;
-    private static final long RESTART_TIME = 2000;
-    private long lastStopped = -RESTART_TIME;
+    private long RESTART_TIME = 2000;
+    private long lastStopped = -100000000;
     private double[] gravityAdjust = {0,0,0};
     private static final double g = 9.81;
     private double[] lastGravity = {0,0,g};
@@ -76,6 +76,7 @@ public class StopWatch extends ShowTime implements SensorEventListener {
     @Override
     protected void onPause() {
         super.onPause();
+        chrono.stop();
         sensorManager.unregisterListener(this, gravity);
     }
 
@@ -85,6 +86,7 @@ public class StopWatch extends ShowTime implements SensorEventListener {
 
         START_ANGLE = Options.getStartAngle(options);
         STOP_ANGLE = Options.getStopAngle(options);
+        RESTART_TIME = Long.parseLong(options.getString(Options.PREF_RESTART_TIME, "2000"));
 
         sensorManager.registerListener(this, gravity, SensorManager.SENSOR_DELAY_FASTEST);
     }
@@ -93,14 +95,6 @@ public class StopWatch extends ShowTime implements SensorEventListener {
     protected void setTheme() {
         super.setTheme();
         int fore = Options.getForeColor(this, options);
-    }
-
-    void pressSecondButton() {
-        chrono.secondButton();
-    }
-
-    void pressFirstButton() {
-        chrono.firstButton();
     }
 
     public boolean isFirstButton(int keyCode) {
@@ -162,11 +156,10 @@ public class StopWatch extends ShowTime implements SensorEventListener {
         double angle = Math.atan2(xy, z) * 180 / Math.PI;
 
         if (angle < START_ANGLE && (! chrono.active || chrono.paused) && java.lang.System.currentTimeMillis() >= lastStopped + RESTART_TIME) {
-            chrono.reset();
-            pressFirstButton();
+            chrono.resetAndStart();
         }
         if (angle >= STOP_ANGLE && (chrono.active && ! chrono.paused)) {
-            pressFirstButton();
+            chrono.stop();
             chrono.readTime();
             lastStopped = java.lang.System.currentTimeMillis();
         }
