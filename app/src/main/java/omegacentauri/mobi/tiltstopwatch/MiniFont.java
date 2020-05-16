@@ -12,6 +12,7 @@ import java.util.Map;
 
 abstract public class MiniFont {
     public float defaultFontSize = 1;
+    public float fractionReduction = 0.5f;
     public Map<Character, Glyph> map;
     public boolean maximizeDigitBounds;
 
@@ -79,8 +80,6 @@ abstract public class MiniFont {
     protected void tweakWidth(char c, float newWidth) {
         Glyph g = map.get(c);
 
-        StopWatch.debug("bad char "+c);
-
         if (g.width == newWidth)
             return;
 
@@ -97,6 +96,8 @@ abstract public class MiniFont {
 
     public void getTextBounds(Paint paint, float letterSpacing, String text, int start, int end, RectF bounds) {
         float x = 0;
+        float resize = 1f;
+
         if (end == start) {
             bounds.set(0, 0, 0, 0);
             return;
@@ -106,12 +107,18 @@ abstract public class MiniFont {
 
         for (int i=start; i<start+end; i++) {
             char c = text.charAt(i);
+            if (c == '.')
+                resize = fractionReduction;
             try {
                 Glyph g = map.get(c);
                 glyphBounds.set(g.bounds);
+                glyphBounds.left *= resize;
+                glyphBounds.right *= resize;
+                glyphBounds.top *= resize;
+                glyphBounds.bottom *= resize;
                 glyphBounds.left += x;
                 glyphBounds.right += x;
-                x += letterSpacing * g.width;
+                x += letterSpacing * g.width * resize;
                 if (i == start)
                     bounds.set(glyphBounds);
                 else
@@ -131,12 +138,17 @@ abstract public class MiniFont {
     public void drawText(Canvas canvas, String text, float x, float y, Paint paint, float letterSpacing) {
         float scaleY = paint.getTextSize() / defaultFontSize;
         float scaleX = scaleY * paint.getTextScaleX();
+        boolean alreadyReduced = false;
 
         canvas.save();
         canvas.translate(x, y);
         canvas.scale(scaleX, scaleY);
         for (int i=0; i<text.length(); i++) {
             char c = text.charAt(i);
+            if (c == '.' && ! alreadyReduced && fractionReduction != 1f) {
+                canvas.scale(fractionReduction, fractionReduction);
+                alreadyReduced = true;
+            }
             try {
                 Glyph g = map.get(c);
                 canvas.drawPath(g.path, paint);

@@ -64,6 +64,12 @@
             android:defaultValue="95%"
             android:entries="@array/letterSpacingValues"
             android:entryValues="@array/letterSpacingValues" />
+        <ListPreference android:title="After Decimal Point Size"
+            android:summary="Set size after decimal point"
+            android:key="fractionReduction"
+            android:defaultValue="50%"
+            android:entries="@array/fractionReductionValues"
+            android:entryValues="@array/fractionReductionValues" />
         <ListPreference android:title="Line Spacing"
             android:summary="Set spacing between portrait mode lines"
             android:key="lineSpacing"

@@ -27,12 +27,14 @@ public class BigTextView extends View {
     GetCenter getCenterY = null;
     static final float BASE_FONT_SIZE = 50f;
     private float maxAspect = 1f;
+    private float fractionReduction = 0.5f;
 
     public BigTextView(Context context, AttributeSet attrs) {
         super(context, attrs);
 
         paint = new Paint(Paint.ANTI_ALIAS_FLAG);
         miniFont = new SansDigitsColon();
+        miniFont.fractionReduction = fractionReduction;
 
         paint.setStyle(Paint.Style.FILL);
         paint.setColor(Color.BLACK);
@@ -52,6 +54,7 @@ public class BigTextView extends View {
 
     public void setFont(MiniFont mf) {
         this.miniFont = mf;
+        this.miniFont.fractionReduction = fractionReduction;
         invalidate();
     }
 
@@ -68,6 +71,11 @@ public class BigTextView extends View {
     public void setLetterSpacing(float ls) {
         letterSpacing = ls;
         invalidate();
+    }
+
+    public void setFractionReduction(float f) {
+        fractionReduction = f;
+        miniFont.fractionReduction = f;
     }
 
     public void setText(String s) {

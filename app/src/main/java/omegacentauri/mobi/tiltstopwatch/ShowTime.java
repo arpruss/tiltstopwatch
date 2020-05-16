@@ -139,6 +139,7 @@ abstract public class ShowTime extends Activity {
         bigDigits.setMaxAspect(Options.getMaxAspect(options));
         bigDigits.setLineSpacing(Float.parseFloat(options.getString(Options.PREF_LINE_SPACING, "105%").replace("%",""))/100f);
         bigDigits.setLetterSpacing(Float.parseFloat(options.getString(Options.PREF_LETTER_SPACING, "95%").replace("%",""))/100f);
+        bigDigits.setFractionReduction(Float.parseFloat(options.getString(Options.PREF_FRACTION_REDUCTION, "50%").replace("%",""))/100f);
         bigDigits.setScale(Float.parseFloat(options.getString(Options.PREF_SCALE, "98%").replace("%",""))/100f);
 
         int fore = Options.getForeColor(this, options);
