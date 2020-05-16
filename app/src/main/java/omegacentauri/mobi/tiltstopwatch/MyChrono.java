@@ -37,7 +37,6 @@ public class MyChrono implements BigTextView.GetCenter, MyTimeKeeper {
     public boolean paused = false;
     public boolean active = false;
     boolean quiet = false;
-    long lastAnnounced = 0;
     Timer timer;
     int maxSize;
     Handler updateHandler;
@@ -51,12 +50,12 @@ public class MyChrono implements BigTextView.GetCenter, MyTimeKeeper {
     private static final long SHORT_TONE_LENGTH = 75;
     private static final long LONG_TONE_LENGTH = 600;
     private static final float TONE_FREQUENCY = 2000;
-    private static final long ANNOUNCEMENT_TIME = 10000;
+    private long ANNOUNCEMENT_TIME = 10000;
     private static final long PREANNOUNCE = 50;
     private double lastAngle = 0;
     private AudioTrack shortTone;
     private AudioTrack longTone;
-    private long lastAnnouncement = 0;
+    private long lastAnnouncement = -10000000;
 
     @SuppressLint("NewApi")
     public MyChrono(Activity context, SharedPreferences options, BigTextView mainView, TextView fractionView, View mainContainer) {
@@ -180,7 +179,7 @@ public class MyChrono implements BigTextView.GetCenter, MyTimeKeeper {
 
     public void resetAndStart() {
         active = false;
-        lastAnnouncement = -10;
+        lastAnnouncement = -10000000;
         baseTime = SystemClock.elapsedRealtime();
         paused = false;
         active = true;
@@ -190,8 +189,10 @@ public class MyChrono implements BigTextView.GetCenter, MyTimeKeeper {
     }
 
     public void stop() {
-        paused = true;
-        pauseTime = SystemClock.elapsedRealtime();
+        if (!paused) {
+            paused = true;
+            pauseTime = SystemClock.elapsedRealtime();
+        }
         stopUpdating();
         save();
         updateViews();
@@ -250,25 +251,15 @@ public class MyChrono implements BigTextView.GetCenter, MyTimeKeeper {
     public void restore() {
         baseTime = options.getLong(Options.PREF_START_TIME, 0);
         pauseTime = options.getLong(Options.PREF_PAUSED_TIME, 0);
+        ANNOUNCEMENT_TIME = 1000*Long.parseLong(options.getString(Options.PREF_ANNOUNCEMENT_SPACING, "10"));
         active = options.getBoolean(Options.PREF_ACTIVE, false);
         paused = options.getBoolean(Options.PREF_PAUSED, false);
-        lastAnnouncement = options.getLong(Options.PREF_LAST_ANNOUNCED, -10);
+        lastAnnouncement = options.getLong(Options.PREF_LAST_ANNOUNCED, -10000000);
         setAudio(options.getString(Options.PREF_SOUND, "voice"));
 
         precision = Integer.parseInt(options.getString(Options.PREF_PRECISION, "100"));
         if (SystemClock.elapsedRealtime() < baseTime)
             active = false;
-
-        if (options.getBoolean(Options.PREF_BOOT_ADJUSTED, false)) {
-            SharedPreferences.Editor ed = options.edit();
-            ed.putBoolean(Options.PREF_BOOT_ADJUSTED, false);
-            apply(ed);
-            StopWatch.debug("adjusted boot warn?");
-            if (active && !paused) {
-                StopWatch.debug("yeah");
-                Toast.makeText(context, "Reboot detected: Some precision may be lost", Toast.LENGTH_LONG).show();
-            }
-        }
 
         if (active && !paused) {
             startUpdating();
@@ -293,7 +284,7 @@ public class MyChrono implements BigTextView.GetCenter, MyTimeKeeper {
     }
 
     public void save() {
-        StopWatch.debug("saving");
+        StopWatch.debug("saving "+pauseTime);
         SharedPreferences.Editor ed = options.edit();
         ed.putLong(Options.PREF_START_TIME, baseTime);
         ed.putLong(Options.PREF_PAUSED_TIME, pauseTime);

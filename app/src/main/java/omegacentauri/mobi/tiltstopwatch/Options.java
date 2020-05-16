@@ -26,6 +26,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class Options extends PreferenceActivity {
+    public static final String PREF_ANNOUNCEMENT_SPACING = "announcementSpacing";
     public static final String PREF_START_TIME = "baseTime";
     public static final String PREF_PAUSED_TIME = "pausedTime";
     public static final String PREF_ACTIVE = "active";

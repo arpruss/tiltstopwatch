@@ -38,7 +38,6 @@ public class StopWatch extends ShowTime implements SensorEventListener {
     private double[] gravityAdjust = {0,0,0};
     private static final double g = 9.81;
     private double[] lastGravity = {0,0,g};
-    private boolean calibrateNow = false;
 
     protected static final int TEXT_BUTTONS[] = {
     };
@@ -97,14 +96,6 @@ public class StopWatch extends ShowTime implements SensorEventListener {
         int fore = Options.getForeColor(this, options);
     }
 
-    public boolean isFirstButton(int keyCode) {
-        return false;
-    }
-
-    public boolean isSecondButton(int keyCode) {
-        return false;
-    }
-
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
         return true;
@@ -131,6 +122,19 @@ public class StopWatch extends ShowTime implements SensorEventListener {
                 gravityAdjust[0] = -lastGravity[0];
                 gravityAdjust[1] = -lastGravity[1];
                 gravityAdjust[2] = g-lastGravity[2];
+                SharedPreferences.Editor ed = options.edit();
+                ed.putFloat("CALIBRATE_X", (float)gravityAdjust[0]);
+                ed.putFloat("CALIBRATE_Y", (float)gravityAdjust[1]);
+                ed.putFloat("CALIBRATE_Z", (float)gravityAdjust[2]);
+                ed.commit();
+            }
+        });
+        b.setNeutralButton("Set defaults", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                gravityAdjust[0] = 0;
+                gravityAdjust[1] = 0;
+                gravityAdjust[2] = 0;
                 SharedPreferences.Editor ed = options.edit();
                 ed.putFloat("CALIBRATE_X", (float)gravityAdjust[0]);
                 ed.putFloat("CALIBRATE_Y", (float)gravityAdjust[1]);
@@ -172,9 +176,5 @@ public class StopWatch extends ShowTime implements SensorEventListener {
     @Override
     public void onAccuracyChanged(Sensor sensor, int i) {
 
-    }
-
-    public void onButtonCalibrate(View view) {
-        calibrateNow = true;
     }
 }

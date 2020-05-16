@@ -18,11 +18,16 @@
         android:defaultValue="2000"
         android:entries="@array/restartDisplayValues"
         android:entryValues="@array/restartValues" />
-    <ListPreference android:title="Sounds"
+    <ListPreference android:title="Announcements"
         android:key="sounds"
         android:defaultValue="voice"
         android:entries="@array/soundValues"
         android:entryValues="@array/soundValues" />
+    <ListPreference android:title="Seconds between announcements"
+        android:key="announcementSpacing"
+        android:defaultValue="10"
+        android:entries="@array/spacingValues"
+        android:entryValues="@array/spacingValues" />
     <ListPreference android:title="Display Precision"
         android:summary="Set precision in seconds"
         android:key="precision"

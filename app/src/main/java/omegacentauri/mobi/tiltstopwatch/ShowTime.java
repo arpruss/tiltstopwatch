@@ -36,7 +36,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 abstract public class ShowTime extends Activity {
-    private static final boolean DEBUG = true;
+    private static final boolean DEBUG = false;
     private static final int DARK_THEME = Build.VERSION.SDK_INT >= 23 ?
             android.R.style.Theme_DeviceDefault_Dialog_Alert :
             Build.VERSION.SDK_INT >= 14 ?
