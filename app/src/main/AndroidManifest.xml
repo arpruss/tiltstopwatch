@@ -13,13 +13,15 @@
         android:label="Balance Timer"
         android:icon="@mipmap/ic_launcher"
         android:supportsRtl="true">
-        <activity android:name=".StopWatch">
+        <activity android:name=".StopWatch"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".Options">
+        <activity android:name=".Options"
+            android:exported="true">
             <intent-filter>
                 <category android:name="android.intent.category.PREFERENCE" />
             </intent-filter>

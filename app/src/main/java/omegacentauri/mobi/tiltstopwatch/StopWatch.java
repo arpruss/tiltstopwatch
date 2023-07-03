@@ -10,24 +10,10 @@ import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Build;
 import android.os.Bundle;
-import android.text.Editable;
-import android.text.SpannableStringBuilder;
-import android.text.Spanned;
-import android.text.TextWatcher;
-import android.text.style.TabStopSpan;
-import android.util.Log;
-import android.view.HapticFeedbackConstants;
-import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.MotionEvent;
-import android.view.View;
-import android.view.WindowManager;
-import android.widget.Button;
-import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 public class StopWatch extends ShowTime implements SensorEventListener {
     private MyChrono chrono;
@@ -35,13 +21,14 @@ public class StopWatch extends ShowTime implements SensorEventListener {
     private double STOP_ANGLE;
     private long RESTART_TIME = 2000;
     private long lastStopped = -100000000;
-    private double[] gravityAdjust = {0,0,0};
+//    private double[] gravityAdjust = {0,0,0};
+    private double[] vertical = {0,0,1};
     private static final double g = 9.81;
     private double[] lastGravity = {0,0,g};
 
-    protected static final int TEXT_BUTTONS[] = {
+    protected static final int[] TEXT_BUTTONS = {
     };
-    protected static final int IMAGE_BUTTONS[][] = {
+    protected static final int[][] IMAGE_BUTTONS = {
             {R.id.settings, R.drawable.settings},
             {R.id.menu, R.drawable.menu}
     };
@@ -67,9 +54,9 @@ public class StopWatch extends ShowTime implements SensorEventListener {
 
         sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
         gravity = sensorManager.getDefaultSensor(Build.VERSION.SDK_INT >= 9 ? Sensor.TYPE_GRAVITY : Sensor.TYPE_ACCELEROMETER);
-        gravityAdjust[0] = options.getFloat("CALIBRATE_X", 0);
-        gravityAdjust[1] = options.getFloat("CALIBRATE_Y", 0);
-        gravityAdjust[2] = options.getFloat("CALIBRATE_Z", 0);
+        vertical[0] = options.getFloat("VERTICAL_X", 0);
+        vertical[1] = options.getFloat("VERTICAL_Y", 0);
+        vertical[2] = options.getFloat("VERTICAL_Z", 1);
     }
 
     @Override
@@ -119,26 +106,27 @@ public class StopWatch extends ShowTime implements SensorEventListener {
         b.setPositiveButton("Calibrate", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
-                gravityAdjust[0] = -lastGravity[0];
-                gravityAdjust[1] = -lastGravity[1];
-                gravityAdjust[2] = g-lastGravity[2];
+                double norm = Math.sqrt(lastGravity[0]*lastGravity[0]+lastGravity[1]*lastGravity[1]+lastGravity[2]*lastGravity[2]);
+                vertical[0] = lastGravity[0] / norm;
+                vertical[1] = lastGravity[1] / norm;
+                vertical[2] = lastGravity[2] / norm;
                 SharedPreferences.Editor ed = options.edit();
-                ed.putFloat("CALIBRATE_X", (float)gravityAdjust[0]);
-                ed.putFloat("CALIBRATE_Y", (float)gravityAdjust[1]);
-                ed.putFloat("CALIBRATE_Z", (float)gravityAdjust[2]);
+                ed.putFloat("VERTICAL_X", (float)vertical[0]);
+                ed.putFloat("VERTICAL_Y", (float)vertical[1]);
+                ed.putFloat("VERTICAL_Z", (float)vertical[2]);
                 ed.commit();
             }
         });
         b.setNeutralButton("Set defaults", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
-                gravityAdjust[0] = 0;
-                gravityAdjust[1] = 0;
-                gravityAdjust[2] = 0;
+                vertical[0] = 0;
+                vertical[1] = 0;
+                vertical[2] = 1;
                 SharedPreferences.Editor ed = options.edit();
-                ed.putFloat("CALIBRATE_X", (float)gravityAdjust[0]);
-                ed.putFloat("CALIBRATE_Y", (float)gravityAdjust[1]);
-                ed.putFloat("CALIBRATE_Z", (float)gravityAdjust[2]);
+                ed.putFloat("VERTICAL_X", (float)vertical[0]);
+                ed.putFloat("VERTICAL_Y", (float)vertical[1]);
+                ed.putFloat("VERTICAL_Z", (float)vertical[2]);
                 ed.commit();
             }
         });
@@ -153,11 +141,11 @@ public class StopWatch extends ShowTime implements SensorEventListener {
 
     @Override
     public void onSensorChanged(SensorEvent event) {
-        double x = event.values[0] + gravityAdjust[0];
-        double y = event.values[1] + gravityAdjust[1];
-        double z = event.values[2] + gravityAdjust[2];
-        double xy = Math.sqrt(x*x+y*y);
-        double angle = Math.atan2(xy, z) * 180 / Math.PI;
+        double x = event.values[0];
+        double y = event.values[1];
+        double z = event.values[2];
+        double cosAngle = (x * vertical[0] + y * vertical[1] + z * vertical[2])/Math.sqrt(x*x+y*y+z*z);
+        double angle = safeacos(cosAngle) * 180 / Math.PI;
 
         if (angle < START_ANGLE && (! chrono.active || chrono.paused) && java.lang.System.currentTimeMillis() >= lastStopped + RESTART_TIME) {
             chrono.resetAndStart();
@@ -168,9 +156,18 @@ public class StopWatch extends ShowTime implements SensorEventListener {
             lastStopped = java.lang.System.currentTimeMillis();
         }
         chrono.setAngle(angle);
-        lastGravity[0] = event.values[0];
-        lastGravity[1] = event.values[1];
-        lastGravity[2] = event.values[2];
+        lastGravity[0] = x;
+        lastGravity[1] = y;
+        lastGravity[2] = z;
+    }
+
+    public static double safeacos(double x) {
+        if (x<-1)
+            return -Math.PI;
+        else if (x>1)
+            return 0;
+        else
+            return Math.acos(x);
     }
 
     @Override

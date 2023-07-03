@@ -76,8 +76,10 @@ public class Options extends PreferenceActivity {
     private static void addColor(String name, int fg, int bg) {
         colorMap.put(name, new int[]{fg,bg});
     }
+
     static {
         addColor("black on white", Color.BLACK, Color.WHITE);
+        addColor("dark green on black", Color.argb(255,0,128,0), Color.BLACK);
         addColor("green on black", Color.GREEN, Color.BLACK);
         addColor("red on black", Color.RED, Color.BLACK);
         addColor("yellow on black", Color.YELLOW, Color.BLACK);
